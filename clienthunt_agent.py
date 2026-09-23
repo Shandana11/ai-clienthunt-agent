@@ -8,7 +8,7 @@ from search_tool import FreeWebSearchTool
 def run_clienthunt(
     skills,
     experience,
-    work_preferences,
+    work_preference,
     location_preference,
     budget,
     additional_requirements,
@@ -61,8 +61,8 @@ def run_clienthunt(
     Experience:
     {experience}
 
-    Work preferences:
-    {work_preferences}
+    Work preference:
+    {work_preference}
 
     Location preference:
     {location_preference}
