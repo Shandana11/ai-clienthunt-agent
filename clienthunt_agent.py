@@ -28,8 +28,8 @@ def run_clienthunt(
     llm = LLM(
     model="groq/openai/gpt-oss-20b",
     api_key=groq_api_key,
-    temperature=0.2,
-    max_tokens=1000,
+    temperature=0.1,
+    max_tokens=500,
 )
 
     # Initialize the web search tool
@@ -56,52 +56,28 @@ def run_clienthunt(
     )
 
     # Prepare the research task
-    task_description = f"""
-    Find relevant online work opportunities based on the following user
-    information:
+        task_description = f"""
+    Find relevant online work opportunities based on these details:
 
-    Skills:
-    {skills}
+    Skills: {skills}
+    Experience: {experience}
+    Work preference: {work_preference}
+    Location: {location_preference}
+    Budget: {budget_preference}
+    Additional requirements: {additional_requirements}
 
-    Experience:
-    {experience}
+    Search for realistic remote jobs, freelance projects, internships,
+    and potential clients matching the user's skills.
 
-    Work preference:
-    {work_preference}
+    For each opportunity, provide:
+    1. Title
+    2. Company or client
+    3. Source website and application link, if available
+    4. Brief matching reason
+    5. Application advice
 
-    Location preference:
-    {location_preference}
-
-    Budget or expected payment:
-    {budget_preference}
-
-    Additional requirements:
-    {additional_requirements}
-
-    Your responsibilities:
-
-    1. Search the public web for relevant remote jobs, freelance projects,
-       internships, and potential clients.
-
-    2. Focus on opportunities that match the user's skills and experience.
-
-    3. Prioritize realistic opportunities for the user's experience level.
-
-    4. Provide the opportunity title and company or client name when available.
-
-    5. Include the source website and direct application link when available.
-
-    6. Explain why each opportunity may be relevant.
-
-    7. Do not invent job listings, companies, links, salaries, or deadlines.
-
-    8. Clearly mention when information cannot be verified.
-
-    9. Present the results in a clear and organized format.
-
-    10. Provide practical suggestions for applying or contacting the client.
-
-    Return a useful opportunity research report for the user.
+    Return a concise report with up to 5 opportunities.
+    Do not invent jobs, companies, links, salaries, or deadlines.
     """
 
     research_task = Task(
