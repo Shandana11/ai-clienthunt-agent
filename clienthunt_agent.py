@@ -29,7 +29,7 @@ def run_clienthunt(skills, experience, work_preference, location_preference, bud
 
     try:
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": "You are a precise, highly skilled AI freelance and career matching assistant."},
                 {"role": "user", "content": prompt}
