@@ -1,115 +1,114 @@
+
 import os
 
 from crewai import Agent, Crew, LLM, Process, Task
-
 from search_tool import FreeWebSearchTool
 
 
 def run_clienthunt(
-    skills: str,
-    experience: str,
-    work_preference: str,
-    location_preference: str,
-    budget_preference: str,
-    additional_requirements: str,
-    groq_api_key: str,
-) -> str:
-    """Run one CrewAI agent to discover and analyze opportunities."""
-
+    skills,
+    experience,
+    work_preferences,
+    location_preference,
+    budget,
+    additional_requirements,
+    groq_api_key,
+):
     if not groq_api_key:
-        raise ValueError(
-            "GROQ_API_KEY is missing. Configure it in Streamlit Secrets."
-        )
+        raise ValueError("Groq API key is missing.")
 
+    # Set the Groq API key
     os.environ["GROQ_API_KEY"] = groq_api_key
 
-llm = LLM(
-    model="groq/openai/gpt-oss-120b",
-    api_key=groq_api_key,
-    temperature=0.2,
-)
+    # Initialize the Groq LLM
+    llm = LLM(
+        model="groq/openai/gpt-oss-120b",
+        api_key=groq_api_key,
+        temperature=0.2,
+    )
 
+    # Initialize the web search tool
     search_tool = FreeWebSearchTool()
 
+    # Create the ClientHunt AI agent
     client_hunt_agent = Agent(
-        role="AI Client Hunting Specialist",
+        role="AI ClientHunt Research Specialist",
         goal=(
-            "Find relevant and publicly discoverable job opportunities "
-            "for the user's skills and preferences."
+            "Find relevant remote job opportunities, freelance projects, "
+            "and potential clients based on the user's skills, experience, "
+            "preferences, and requirements."
         ),
         backstory=(
-            "You are a careful job research assistant specializing in "
-            "remote work, freelance projects, AI development, automation, "
-            "and beginner-friendly client leads. You evaluate search "
-            "results based on the user's actual skills and experience. "
-            "You never invent job listings or claim that a listing is "
-            "still open without evidence."
+            "You are an expert opportunity researcher who searches the "
+            "public web for relevant and realistic opportunities. You "
+            "carefully analyze job listings and provide useful details "
+            "without inventing information."
         ),
-        llm=llm,
         tools=[search_tool],
+        llm=llm,
         verbose=True,
         allow_delegation=False,
     )
 
+    # Prepare the research task
     task_description = f"""
-Find relevant job and freelance opportunities based on this profile.
+    Find relevant online work opportunities based on the following user
+    information:
 
-USER SKILLS:
-{skills}
+    Skills:
+    {skills}
 
-EXPERIENCE:
-{experience}
+    Experience:
+    {experience}
 
-WORK PREFERENCE:
-{work_preference}
+    Work preferences:
+    {work_preferences}
 
-LOCATION PREFERENCE:
-{location_preference}
+    Location preference:
+    {location_preference}
 
-BUDGET / INCOME PREFERENCE:
-{budget_preference}
+    Budget or expected payment:
+    {budget}
 
-ADDITIONAL REQUIREMENTS:
-{additional_requirements}
+    Additional requirements:
+    {additional_requirements}
 
-INSTRUCTIONS:
-1. Search the public web using the available search tool.
-2. Search across different websites and platforms.
-3. Include job boards, company career pages, and freelance opportunities.
-4. Focus on the user's actual skills and experience.
-5. Prefer opportunities matching the user's work preferences.
-6. Never invent job titles, companies, URLs, salaries, or requirements.
-7. Avoid duplicate results.
-8. Explain why each opportunity may match the profile.
-9. Identify missing information and possible risks.
-10. Include the original source URL for every opportunity.
+    Your responsibilities:
 
-Return a clear markdown report with:
-- Opportunity title
-- Company or platform
-- Source URL
-- Work type
-- Required skills
-- Experience requirements
-- Match explanation
-- Important limitations or risks
-- Suggested next action
+    1. Search the public web for relevant remote jobs, freelance projects,
+       internships, and potential clients.
 
-IMPORTANT:
-A search result is not proof that a job is currently active.
-Clearly distinguish discovered listings from verified active opportunities.
-Do not apply to jobs or contact clients automatically.
-"""
+    2. Focus on opportunities that match the user's skills and experience.
+
+    3. Prioritize realistic opportunities for the user's experience level.
+
+    4. Provide the opportunity title and company or client name when available.
+
+    5. Include the source website and direct application link when available.
+
+    6. Explain why each opportunity may be relevant.
+
+    7. Do not invent job listings, companies, links, salaries, or deadlines.
+
+    8. Clearly mention when information cannot be verified.
+
+    9. Present the results in a clear and organized format.
+
+    10. Provide practical suggestions for applying or contacting the client.
+
+    Return a useful opportunity research report for the user.
+    """
 
     research_task = Task(
         description=task_description,
         expected_output=(
-            "A structured markdown report of relevant job opportunities "
-            "with source URLs, matching explanations, and limitations."
+            "A clear and organized report containing relevant opportunities, "
+            "source links, matching reasons, and practical application advice."
         ),
         agent=client_hunt_agent,
     )
 
+    # Create and run the CrewAI crew
     crew = Crew(
         agents=[client_hunt_agent],
         tasks=[research_task],
