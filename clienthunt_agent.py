@@ -1,3 +1,5 @@
+import os
+
 from crewai import Agent, Crew, LLM, Process, Task
 
 from search_tool import FreeWebSearchTool
@@ -19,7 +21,9 @@ def run_clienthunt(
             "GROQ_API_KEY is missing. Configure it in Streamlit Secrets."
         )
 
-    llm = LLM(
+    os.environ["GROQ_API_KEY"] = groq_api_key
+
+llm = LLM(
     model="groq/openai/gpt-oss-120b",
     api_key=groq_api_key,
     temperature=0.2,
