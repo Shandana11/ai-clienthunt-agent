@@ -29,10 +29,7 @@ class FreeWebSearchTool(BaseTool):
             results = []
 
             with DDGS() as ddgs:
-                search_results = ddgs.text(
-                    query,
-                    max_results=10,
-                )
+                search_results = ddgs.text(query, max_results=5)
 
                 for item in search_results:
                     title = item.get("title", "No title")
