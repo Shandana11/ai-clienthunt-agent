@@ -1,46 +1,49 @@
 import os
 from groq import Groq
 
-def run_clienthunt(
-    skills: str,
-    experience: str,
-    work_preference: str,
-    location_preference: str,
-    budget_preference: str,
-    additional_requirements: str,
-    groq_api_key: str,
-) -> str:
+def run_clienthunt(skills, experience, work_preference, location_preference, budget_preference, additional_requirements, groq_api_key):
+    """
+    Backend function that uses Groq to generate a matched job/work report 
+    with exact workflows, platforms, and actionable steps.
+    """
     if not groq_api_key:
-        raise ValueError("Groq API key is missing.")
+        return "Error: Groq API key is missing."
 
     client = Groq(api_key=groq_api_key)
 
     prompt = f"""
-You are an expert career researcher. Find 2 active remote job or freelance opportunities matching these criteria:
-- Skills: {skills}
-- Experience: {experience}
-- Work Type: {work_preference}
-- Location: {location_preference}
-- Budget/Rate: {budget_preference}
-- Additional Notes: {additional_requirements}
+    You are an expert career and freelance strategist agent. Your task is to find matchable jobs, freelance projects, and work opportunities based on the user's specific profile and requirements.
 
-Provide a clean, concise list including:
-1. Job/Gig Title
-2. Company or Platform
-3. Direct Link (only verified, real links)
-4. Brief Reason why it's a match
-"""
+    User Profile & Search Parameters:
+    - Skills: {skills}
+    - Experience Level: {experience}
+    - Work Preference: {work_preference}
+    - Location Preference: {location_preference}
+    - Budget / Pay Preference: {budget_preference}
+    - Additional Requirements: {additional_requirements}
+
+    Please provide a comprehensive, structured report containing:
+    1. **Top Matchable Platforms & Websites**: List specific platforms (e.g., Upwork, Contra, Remote.co, LinkedIn, etc.) where these exact skills and experience levels are in high demand.
+    2. **Exact Workflows & Steps**: Provide a step-by-step workflow on how to target clients, optimize profiles, or apply on these platforms.
+    3. **Tailored Pitch / Outreach Strategy**: Give a ready-to-use template or strategy for pitching clients.
+    4. **Actionable Recommendations**: Clear, practical advice tailored to the user's experience level to land work quickly.
+
+    Make the response professional, detailed, highly actionable, and easy to read using Markdown formatting.
+    """
 
     try:
         response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
+            model="llama-3.3-70b-versatile",
             messages=[
-                {"role": "system", "content": "You are a helpful research assistant that provides accurate job leads with valid links."},
+                {"role": "system", "content": "You are a precise, highly skilled AI freelance and career matching assistant."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.1,
-            max_tokens=600,
+            temperature=0.7,
+            max_tokens=2048,
         )
-        return response.choices[0].message.content
+        
+        report = response.choices[0].message.content
+        return report
+
     except Exception as e:
-        return f"Error connecting to Groq: {str(e)}"
+        return f"An error occurred while generating the report via Groq: {str(e)}"
