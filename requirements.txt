@@ -1,4 +1,6 @@
 crewai==1.15.17
+crewai[litellm]==1.15.17
 streamlit
 ddgs
 pydantic
+litellm
