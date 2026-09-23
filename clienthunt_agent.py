@@ -10,7 +10,7 @@ def run_clienthunt(
     experience,
     work_preference,
     location_preference,
-    budget,
+    budget_preference,
     additional_requirements,
     groq_api_key,
 ):
