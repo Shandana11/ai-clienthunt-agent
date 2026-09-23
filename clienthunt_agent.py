@@ -1,9 +1,13 @@
 
 import os
 
+import crewai.llms.cache as _crewai_cache
+
+# Workaround for CrewAI cache_breakpoint error with Groq
+_crewai_cache.mark_cache_breakpoint = lambda msg: msg
+
 from crewai import Agent, Crew, LLM, Process, Task
 from search_tool import FreeWebSearchTool
-
 
 def run_clienthunt(
     skills,
