@@ -107,9 +107,10 @@ def run_clienthunt(
     research_task = Task(
         description=task_description,
         expected_output=(
-            "A clear and organized report containing relevant opportunities, "
-            "source links, matching reasons, and practical application advice."
-        ),
+    "Provide a concise report with up to 5 relevant opportunities. "
+    "For each opportunity, include the title, company, source link, "
+    "matching reason, and application advice. Do not invent information."
+),
         agent=client_hunt_agent,
     )
 
