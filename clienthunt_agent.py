@@ -1,9 +1,5 @@
 import os
-import time
-from crewai import Agent, Crew, LLM, Process, Task
-from search_tool import FreeWebSearchTool
-
-os.environ["LITELLM_RETRY"] = "True"
+from groq import Groq
 
 def run_clienthunt(
     skills,
@@ -17,51 +13,33 @@ def run_clienthunt(
     if not groq_api_key:
         raise ValueError("Groq API key is missing.")
 
-    os.environ["GROQ_API_KEY"] = groq_api_key
+    # Initialize the official Groq client directly
+    client = Groq(api_key=groq_api_key)
 
-    llm = LLM(
-        model="groq/openai/gpt-oss-20b",
-        api_key=groq_api_key,
-        temperature=0.1,
-        max_tokens=200, 
-    )
-
-    search_tool = FreeWebSearchTool()
-
-    client_hunt_agent = Agent(
-        role="Researcher",
-        goal="Find 2 remote jobs matching criteria.",
-        backstory="Finds web opportunities quickly.",
-        tools=[search_tool],
-        llm=llm,
-        verbose=True,
-        allow_delegation=False,
-    )
-
-    task_description = f"""
-Find 2 remote gigs for:
+    prompt = f"""
+You are an expert freelance career researcher. Find 2 active remote job or freelance opportunities matching these criteria:
 - Skills: {skills}
-- Type: {work_preference}
-- Notes: {additional_requirements}
+- Experience: {experience}
+- Work Type: {work_preference}
+- Location: {location_preference}
+- Budget/Rate: {budget_preference}
+- Additional Notes: {additional_requirements}
 
-List: Title, Company, Link, Reason. Do not invent links.
+Provide a clean, concise list including:
+1. Job/Gig Title
+2. Company or Platform
+3. Direct Link (only verified, real links)
+4. Brief Reason why it's a match
 """
 
-    research_task = Task(
-        description=task_description,
-        expected_output="A short list of 2 verified opportunities with links.",
-        agent=client_hunt_agent,
-    )
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=[
+            {"role": "system", "content": "You are a helpful research assistant that provides accurate job leads with valid links."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.1,
+        max_tokens=600,
+    ]
 
-    crew = Crew(
-        agents=[client_hunt_agent],
-        tasks=[research_task],
-        process=Process.sequential,
-        verbose=False,
-    )
-
-    # Give Groq's TPM window a brief breather before hitting it
-    time.sleep(10)
-
-    result = crew.kickoff()
-    return str(result)
+    return response.choices[0].message.content
