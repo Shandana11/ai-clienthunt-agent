@@ -1,5 +1,5 @@
 import streamlit as st
-from agent import run_clienthunt
+from clienthunt_agent import run_clienthunt
 
 st.set_page_config(page_title="ClientHunt Agent", page_icon="🎯", layout="centered")
 
