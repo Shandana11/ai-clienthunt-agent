@@ -6,12 +6,18 @@ st.set_page_config(page_title="ClientHunt Agent", page_icon="🎯", layout="cent
 st.title("🎯 AI ClientHunt Agent")
 st.write("Find freelance opportunities and generate tailored pitches automatically.")
 
-# Sidebar or main inputs for API key
-st.sidebar.header("Configuration")
-groq_api_key = st.sidebar.text_input("Groq API Key", type="password")
+# Automatically load Groq API Key from Streamlit Secrets
+groq_api_key = None
+try:
+    if "GROQ_API_KEY" in st.secrets:
+        groq_api_key = st.secrets["GROQ_API_KEY"]
+except Exception:
+    pass
 
+# Fallback to sidebar input only if secret is not set
 if not groq_api_key:
-    st.warning("Please enter your Groq API key in the sidebar to continue.")
+    st.sidebar.header("Configuration")
+    groq_api_key = st.sidebar.text_input("Groq API Key", type="password")
 
 st.header("Search Parameters")
 skills = st.text_input("Skills (e.g., Python, Streamlit, Graphic Design)")
@@ -23,7 +29,7 @@ additional_requirements = st.text_area("Additional Requirements")
 
 if st.button("Find Opportunities"):
     if not groq_api_key:
-        st.error("GROQ_API_KEY is missing. Add it in sidebar or Streamlit Secrets.")
+        st.error("GROQ_API_KEY is missing. Add it in Streamlit Cloud Secrets.")
         st.stop()
 
     try:
