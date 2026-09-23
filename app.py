@@ -131,8 +131,6 @@ if st.button("🔍 Find Opportunities", type="primary"):
       st.error("Something went wrong while running the agent.")
       st.exception(error)
 
-# Then further down where the download button is:
-if "report" in st.session_state and st.session_state.report:
   st.subheader("ClientHunt Report")
   st.markdown(st.session_state.report)
 
@@ -142,8 +140,3 @@ if "report" in st.session_state and st.session_state.report:
       file_name="clienthunt_report.txt",
       mime="text/plain",
   )
-            )
-
-        except Exception as error:
-            st.error("Something went wrong while running the agent.")
-            st.exception(error)
