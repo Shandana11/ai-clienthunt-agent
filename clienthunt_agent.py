@@ -2,7 +2,6 @@ import os
 from crewai import Agent, Crew, LLM, Process, Task
 from search_tool import FreeWebSearchTool
 
-# Enable automatic retries on rate limits
 os.environ["LITELLM_RETRY"] = "True"
 
 def run_clienthunt(
@@ -19,41 +18,39 @@ def run_clienthunt(
 
     os.environ["GROQ_API_KEY"] = groq_api_key
 
-    # Correct model identifier for Groq via LiteLLM
+    # Back to your working model, but with a tiny max_tokens to prevent TPM limits
     llm = LLM(
-        model="groq/llama-3.1-8b-instant",
+        model="groq/openai/gpt-oss-20b",
         api_key=groq_api_key,
         temperature=0.1,
-        max_tokens=400,
+        max_tokens=200, 
     )
 
     search_tool = FreeWebSearchTool()
 
     client_hunt_agent = Agent(
-        role="Opportunity Researcher",
-        goal="Find relevant remote jobs and freelance projects matching user criteria.",
-        backstory="You search the web accurately and provide concise opportunity reports.",
+        role="Researcher",
+        goal="Find 2 remote jobs matching criteria.",
+        backstory="Finds web opportunities quickly.",
         tools=[search_tool],
         llm=llm,
         verbose=True,
         allow_delegation=False,
     )
 
+    # Ultra-short prompt to keep requested tokens very low (< 500 tokens)
     task_description = f"""
-Find up to 3 remote jobs or freelance projects:
+Find 2 remote gigs for:
 - Skills: {skills}
-- Experience: {experience}
 - Type: {work_preference}
-- Location: {location_preference}
-- Budget: {budget_preference}
 - Notes: {additional_requirements}
 
-For each opportunity list: Title, Company/Client, Link, Reason, and Advice. Do not invent links.
+List: Title, Company, Link, Reason. Do not invent links.
 """
 
     research_task = Task(
         description=task_description,
-        expected_output="A concise list of up to 3 web-verified opportunities with titles, links, and details.",
+        expected_output="A short list of 2 verified opportunities with links.",
         agent=client_hunt_agent,
     )
 
@@ -61,7 +58,7 @@ For each opportunity list: Title, Company/Client, Link, Reason, and Advice. Do n
         agents=[client_hunt_agent],
         tasks=[research_task],
         process=Process.sequential,
-        verbose=True,
+        verbose=False,
     )
 
     result = crew.kickoff()
