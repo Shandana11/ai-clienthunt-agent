@@ -1,4 +1,5 @@
 import os
+import time
 from crewai import Agent, Crew, LLM, Process, Task
 from search_tool import FreeWebSearchTool
 
@@ -18,7 +19,6 @@ def run_clienthunt(
 
     os.environ["GROQ_API_KEY"] = groq_api_key
 
-    # Back to your working model, but with a tiny max_tokens to prevent TPM limits
     llm = LLM(
         model="groq/openai/gpt-oss-20b",
         api_key=groq_api_key,
@@ -38,7 +38,6 @@ def run_clienthunt(
         allow_delegation=False,
     )
 
-    # Ultra-short prompt to keep requested tokens very low (< 500 tokens)
     task_description = f"""
 Find 2 remote gigs for:
 - Skills: {skills}
@@ -60,6 +59,9 @@ List: Title, Company, Link, Reason. Do not invent links.
         process=Process.sequential,
         verbose=False,
     )
+
+    # Give Groq's TPM window a brief breather before hitting it
+    time.sleep(10)
 
     result = crew.kickoff()
     return str(result)
