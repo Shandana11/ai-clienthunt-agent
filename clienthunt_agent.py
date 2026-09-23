@@ -68,7 +68,7 @@ def run_clienthunt(
     {location_preference}
 
     Budget or expected payment:
-    {budget}
+    {budget_preference}
 
     Additional requirements:
     {additional_requirements}
