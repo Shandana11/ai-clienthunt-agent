@@ -26,10 +26,11 @@ def run_clienthunt(
 
     # Initialize the Groq LLM
     llm = LLM(
-        model="groq/openai/gpt-oss-120b",
-        api_key=groq_api_key,
-        temperature=0.2,
-    )
+    model="groq/openai/gpt-oss-120b",
+    api_key=groq_api_key,
+    temperature=0.2,
+    max_tokens=1500,
+)
 
     # Initialize the web search tool
     search_tool = FreeWebSearchTool()
