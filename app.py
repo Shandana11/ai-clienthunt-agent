@@ -20,7 +20,6 @@ if not groq_api_key:
 
 st.header("Search Parameters")
 
-# Exact fields requested
 skills = st.text_input("Skills (e.g., Graphic Design, Python, Digital Marketing)")
 experience = st.selectbox("Experience Level", ["Beginner", "Intermediate", "Expert"])
 work_preference = st.text_input("Work Preference (e.g., Remote freelance projects, Part-time)")
@@ -45,24 +44,16 @@ if st.button("Find your matchable job or work"):
                 groq_api_key=groq_api_key,
             )
             
-            # Store in session state to persist across reruns
             st.session_state.report = report_result
             
         except Exception as error:
             st.error("Something went wrong while running the agent.")
             st.exception(error)
 
-# Display report if it exists in session state
+# Display report cleanly as text directly on screen (no download button)
 if "report" in st.session_state:
     if st.session_state.report:
         st.subheader("ClientHunt Matched Report & Workflows")
         st.markdown(st.session_state.report)
-
-        st.download_button(
-            label="Download Report (.txt)",
-            data=st.session_state.report,
-            file_name="clienthunt_matched_report.txt",
-            mime="text/plain",
-        )
     else:
-        st.warning("The agent ran successfully, but returned an empty response. Try broadening your skills or requirements!")
+        st.warning("The agent ran successfully, but returned an empty response.")
