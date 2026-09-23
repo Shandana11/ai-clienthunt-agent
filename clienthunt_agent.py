@@ -2,7 +2,7 @@ import os
 from crewai import Agent, Crew, LLM, Process, Task
 from search_tool import FreeWebSearchTool
 
-# 1. Automatically wait and retry if Groq hits a token limit
+# Enable automatic retries on rate limits
 os.environ["LITELLM_RETRY"] = "True"
 
 def run_clienthunt(
@@ -19,17 +19,16 @@ def run_clienthunt(
 
     os.environ["GROQ_API_KEY"] = groq_api_key
 
-    # 2. Kept your working model, but lowered max_tokens to save room
+    # Correct model identifier for Groq via LiteLLM
     llm = LLM(
-        model="groq/openai/gpt-oss-20b",
+        model="groq/llama-3.1-8b-instant",
         api_key=groq_api_key,
         temperature=0.1,
-        max_tokens=350,
+        max_tokens=400,
     )
 
     search_tool = FreeWebSearchTool()
 
-    # 3. Shortened backstory to use fewer tokens per request
     client_hunt_agent = Agent(
         role="Opportunity Researcher",
         goal="Find relevant remote jobs and freelance projects matching user criteria.",
