@@ -112,7 +112,7 @@ if st.button("🔍 Find Opportunities", type="primary"):
         )
         st.stop()
 
-    with st.spinner("The ClientHunt Agent is searching for opportunities..."):
+
   try:
     st.session_state.report = run_clienthunt(
         skills=skills,
