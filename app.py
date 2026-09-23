@@ -134,8 +134,8 @@ if st.button("🔍 Find Opportunities", type="primary"):
             st.download_button(
                 label="📥 Download Report",
                 data=report,
-                file_name="clienthunt_report.md",
-                mime="text/markdown",
+                file_name="clienthunt_report.txt",
+                mime="text/plain",
             )
 
         except Exception as error:
