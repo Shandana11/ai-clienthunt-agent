@@ -1,0 +1,4 @@
+crewai==1.15.17
+streamlit
+ddgs
+pydantic
