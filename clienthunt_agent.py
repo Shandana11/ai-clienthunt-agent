@@ -2,10 +2,6 @@ import os
 from groq import Groq
 
 def run_clienthunt(skills, experience, work_preference, location_preference, budget_preference, additional_requirements, groq_api_key):
-    """
-    Backend function that uses Groq to generate a matched job/work report 
-    with exact workflows, platforms, and actionable steps.
-    """
     if not groq_api_key:
         return "Error: Groq API key is missing."
 
@@ -33,7 +29,7 @@ def run_clienthunt(skills, experience, work_preference, location_preference, bud
 
     try:
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": "You are a precise, highly skilled AI freelance and career matching assistant."},
                 {"role": "user", "content": prompt}
